@@ -1,0 +1,12 @@
+{
+  "name": "mongocdwimport",
+  "version": "1.0.0",
+  "description": "a small app to query our MongoDB and import into CDW for Reporting.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
