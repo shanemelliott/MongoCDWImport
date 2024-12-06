@@ -24,10 +24,8 @@ This application connects to a MongoDB database, performs queries to retrieve an
     - Copy `db.js.sample` to `db.js` and fill in the MongoDB URL.
 
 4. Set up an SSH tunnel to connect to the database:
-    ```sh
-    ssh -L <local-port>:<db-host>:<db-port> <ssh-user>@<ssh-host>
-    ```
-    Replace `<local-port>`, `<db-host>`, `<db-port>`, `<ssh-user>`, and `<ssh-host>` with the appropriate values.
+    
+    You can use your favorite SSH client  
 
 5. Run the application:
     ```sh
