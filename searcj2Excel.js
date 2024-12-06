@@ -1,11 +1,13 @@
 const { MongoClient } = require('mongodb');
 const moment = require('moment');
-const config = require('./config.js.sample');
-const db = require('./db.js.sample');
+const fastcsv = require('fast-csv');
+const fs = require('fs');
+const config = require('./config');
+const db = require('./db');
 
 const RespTable = ''; //Import Table    
 const StatsTable = ''; //Import Table
-const dbName = config.mongo.dbName;
+
 
 // Create a new MongoClient
 const client = new MongoClient(db.url,);
@@ -30,36 +32,7 @@ function fm2UTC(dateTime) {
     }
 }
 
-//Function to import Data into CDW
-function insert(record, table) {
-    var cols = [];
-    var vals = [];
-    Object.keys(record).forEach(function (key, index) {
-        cols.push(key)
-        vals.push(record[key])
-    })
-    var arraString = JSON.stringify(vals);
-    //Ugly!!!
-    //Todo: Find a better way to do this
 
-    arraString = arraString.replace(/\'/g, '')
-    arraString = arraString.replace(/true/g, 1)
-    arraString = arraString.replace(/false/g, 0)
-    arraString = arraString.replace(/\[/g, '')
-    arraString = arraString.replace(/]/g, '')
-    arraString = arraString.replace(/\"/g, '\'');
-    try {
-        const query0 = `insert into ${table} (${cols.toString()}) values (${arraString})`;
-        db.query(query0)
-            .catch((err) => {
-                console.error(err, query0);
-                error_log(err, query0)
-            });
-    }
-    catch (error) {
-        console.error(error)
-    }
-}
 async function queryDatabase(date) {
     try {
 
@@ -146,7 +119,10 @@ async function queryDatabase(date) {
             return record;
         })
         console.log(convertedRecords.length);
-        await convertedRecords.forEach(record => insert(record, RespTable));
+        const ws1 = fs.createWriteStream(RespTable+".csv");
+        fastcsv
+        .write(convertedRecords, { headers: true })
+        .pipe(ws1);
 
 
         //Second Search to get the unique cell phones - this is used to get unique patients: 
@@ -180,8 +156,10 @@ async function queryDatabase(date) {
             return record;
         })
 
-        console.log(convertedRecords2.length);
-        await convertedRecords2.forEach(record => insert(record, StatsTable));
+        const ws2 = fs.createWriteStream(RespTable+".csv");
+        fastcsv
+        .write(convertedRecords2, { headers: true })
+        .pipe(ws2);
         
         //drop the temp collection
         console.log('dropping')
