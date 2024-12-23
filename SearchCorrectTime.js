@@ -32,42 +32,7 @@ function fm2UTC(dateTime,timeZone) {
         return ''
     }
 }
- async function insert(record, table, pool) {
-    var cols = [];
-    var vals = [];
-    Object.keys(record).forEach(function (key, index) {
-        cols.push(key)
-        vals.push(record[key])
-    })
-    var arraString = JSON.stringify(vals);
-    //Ugly!!!
-    arraString = arraString.replace(/\'/g, '')
-    arraString = arraString.replace(/true/g, 1)
-    arraString = arraString.replace(/false/g, 0)
-    arraString = arraString.replace(/\[/g, '')
-    arraString = arraString.replace(/]/g, '')
-    arraString = arraString.replace(/\"/g, '\'');
-
-    try {
-        const query0 = `insert into ${table} (${cols.toString()}) values (${arraString})`;
-        await pool.request().query(query0);
-      }
-    catch (error) {
-        console.error(error)
-    }
-}
-async function testSQL(pool) {
-
-        try {
-        const query0 = `SELECT current_user`;
-        const result = await pool.request().query(query0);
-        console.log(result.recordset[0])
-        }
-    catch (error) {
-        console.error(error)
-    }
-}
-
+ 
 
 async function queryDatabase(date) {
     try {
@@ -77,9 +42,6 @@ async function queryDatabase(date) {
         const collection = db.collection('patientAppointments');
         const tempCollection = db.collection('tempPatientAppointments');
        
-
-       //await tempCollection.drop();
-       // await tempCalcCollection.drop();
         // Log the start time
         const startTime = moment().utcOffset('-08:00').format('YYYY-MM-DD HH:mm:ss');
         console.log(`Query started at: ${startTime}`);
@@ -323,28 +285,6 @@ async function insertData(data) {
 
     
 }
-async function processDates(startDate, endDate) {
-    try {
-        // Connect to the MongoDB server
-        await client.connect();
-        console.log('Connected successfully to server');
-
-        let currentDate = startDate;
-        while (currentDate <= endDate) {
-            console.log('Using Date: ' + currentDate);
-            await queryDatabase(currentDate);
-            currentDate++;
-        }
-    } catch (error) {
-        console.error(error);
-    } finally {
-        // Close the connection
-        console.log('disconnecting');
-        await client.close();
-        console.log('Disconnected from server');
-    }
-}
-
 async function processDatesForYear(year) {
     try {
     // Connect to the MongoDB server
