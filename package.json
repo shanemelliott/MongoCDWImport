@@ -8,5 +8,10 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "moment-timezone": "^0.6.0",
+    "mongodb": "^6.16.0",
+    "mssql": "^11.0.1"
+  }
 }
